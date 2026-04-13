@@ -1,0 +1,1419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Le Huu Phuoc — Senior PHP Developer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=Outfit:wght@700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── RESET & BASE ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #0f2342;
+      --navy-mid:   #163354;
+      --teal:       #0ea5e9;
+      --teal-dark:  #0369a1;
+      --teal-light: #bae6fd;
+      --slate:      #334155;
+      --slate-mid:  #64748b;
+      --slate-light:#94a3b8;
+      --bg:         #f8fafc;
+      --bg-card:    #ffffff;
+      --border:     #e2e8f0;
+      --accent:     #06b6d4;
+
+      --font-display: 'Outfit', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out:   cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--bg);
+      color: var(--slate);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── SCROLLBAR ─────────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 3px; }
+
+    /* ── CURSOR GLOW ───────────────────────────────────────────────────── */
+    #cursor-glow {
+      position: fixed;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(14,165,233,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: opacity 0.3s ease;
+      z-index: 0;
+    }
+
+    /* ── NAVBAR ────────────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      background: rgba(248, 250, 252, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 100;
+      transition: box-shadow 0.3s ease;
+    }
+    nav.scrolled { box-shadow: 0 4px 24px rgba(15,35,66,0.08); }
+
+    .nav-logo {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--teal-dark) 100%);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.5px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s var(--ease-out-expo);
+    }
+    .nav-logo:hover { transform: scale(1.08) rotate(3deg); }
+    .nav-logo::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 8px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--slate-mid);
+      padding: 6px 14px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      letter-spacing: -0.01em;
+    }
+    .nav-links a:hover {
+      color: var(--navy);
+      background: rgba(14,165,233,0.08);
+    }
+    .nav-links a.active {
+      color: var(--teal-dark);
+      background: rgba(14,165,233,0.1);
+    }
+
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+
+    /* Language toggle */
+    .lang-toggle {
+      display: flex;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 2px;
+    }
+    .lang-btn {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: transparent;
+      color: var(--slate-mid);
+      transition: all 0.2s ease;
+      letter-spacing: 0.04em;
+    }
+    .lang-btn.active {
+      background: var(--navy);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(15,35,66,0.25);
+    }
+
+    /* ── HERO ──────────────────────────────────────────────────────────── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 80px 40px 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated background grid */
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(14,165,233,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(14,165,233,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: grid-pan 20s linear infinite;
+      z-index: 0;
+    }
+    @keyframes grid-pan {
+      0%   { background-position: 0 0; }
+      100% { background-position: 60px 60px; }
+    }
+
+    /* Floating orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.4;
+      animation: orb-float 8s ease-in-out infinite;
+      z-index: 0;
+    }
+    .orb-1 { width: 500px; height: 500px; background: rgba(14,165,233,0.12); top: -100px; right: -100px; animation-delay: 0s; }
+    .orb-2 { width: 350px; height: 350px; background: rgba(15,35,66,0.08); bottom: 0; left: -80px; animation-delay: 3s; }
+    .orb-3 { width: 250px; height: 250px; background: rgba(6,182,212,0.1); top: 40%; right: 20%; animation-delay: 5s; }
+
+    @keyframes orb-float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50%       { transform: translateY(-30px) scale(1.05); }
+    }
+
+    .hero-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-text { }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(14,165,233,0.1);
+      border: 1px solid rgba(14,165,233,0.2);
+      color: var(--teal-dark);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      animation: fade-up 0.6s var(--ease-out-expo) both;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+      animation: pulse-dot 2s ease infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    .hero-name {
+      font-family: var(--font-display);
+      font-size: clamp(46px, 5.5vw, 72px);
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.05;
+      letter-spacing: -2px;
+      margin-bottom: 16px;
+      animation: fade-up 0.6s var(--ease-out-expo) 0.1s both;
+    }
+    .hero-name span {
+      background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-title {
+      font-size: 18px;
+      font-weight: 400;
+      color: var(--slate-mid);
+      margin-bottom: 28px;
+      animation: fade-up 0.6s var(--ease-out-expo) 0.2s both;
+    }
+
+    .hero-desc {
+      font-size: 15px;
+      color: var(--slate);
+      line-height: 1.8;
+      margin-bottom: 36px;
+      max-width: 480px;
+      animation: fade-up 0.6s var(--ease-out-expo) 0.3s both;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      animation: fade-up 0.6s var(--ease-out-expo) 0.4s both;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--navy);
+      color: #fff;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 10px;
+      transition: all 0.25s var(--ease-out-expo);
+      border: none;
+      cursor: pointer;
+      letter-spacing: 0.01em;
+    }
+    .btn-primary:hover {
+      background: var(--teal-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(3,105,161,0.3);
+    }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--navy);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      transition: all 0.25s var(--ease-out-expo);
+      cursor: pointer;
+    }
+    .btn-secondary:hover {
+      border-color: var(--teal);
+      color: var(--teal-dark);
+      transform: translateY(-2px);
+    }
+
+    /* Hero right — avatar + cards */
+    .hero-visual {
+      position: relative;
+      animation: fade-up 0.7s var(--ease-out-expo) 0.2s both;
+    }
+
+    .avatar-wrap {
+      width: 220px;
+      height: 220px;
+      margin: 0 auto 0 auto;
+      position: relative;
+    }
+    .avatar-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2px dashed rgba(14,165,233,0.3);
+      animation: spin-slow 20s linear infinite;
+    }
+    @keyframes spin-slow { to { transform: rotate(360deg); } }
+
+    .avatar-ring-2 {
+      position: absolute;
+      inset: -20px;
+      border-radius: 50%;
+      border: 1px dashed rgba(14,165,233,0.15);
+      animation: spin-slow 30s linear infinite reverse;
+    }
+
+    .avatar-circle {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--navy) 0%, var(--teal-dark) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 72px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -2px;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 20px 60px rgba(15,35,66,0.3);
+    }
+
+    /* Floating stat chips */
+    .stat-chip {
+      position: absolute;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 16px;
+      box-shadow: 0 8px 24px rgba(15,35,66,0.1);
+      animation: chip-float 4s ease-in-out infinite;
+      z-index: 2;
+    }
+    .stat-chip .val {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1;
+    }
+    .stat-chip .lbl {
+      font-size: 11px;
+      color: var(--slate-mid);
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      margin-top: 2px;
+    }
+    .chip-years  { top: 10px; left: -30px; animation-delay: 0s; }
+    .chip-proj   { bottom: 40px; left: -40px; animation-delay: 1s; }
+    .chip-stack  { top: 20px; right: -40px; animation-delay: 2s; }
+
+    @keyframes chip-float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-8px); }
+    }
+
+    /* ── SECTIONS SHARED ───────────────────────────────────────────────── */
+    section { padding: 80px 40px; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--teal);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 3.5vw, 40px);
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+    }
+    .section-sub {
+      font-size: 15px;
+      color: var(--slate-mid);
+      max-width: 520px;
+      line-height: 1.7;
+      margin-bottom: 56px;
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ── ABOUT ─────────────────────────────────────────────────────────── */
+    #about { background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+
+    .about-text p {
+      font-size: 15px;
+      color: var(--slate);
+      line-height: 1.85;
+      margin-bottom: 16px;
+    }
+
+    .info-list { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; }
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 14px;
+      color: var(--slate);
+    }
+    .info-icon {
+      width: 36px; height: 36px;
+      background: rgba(14,165,233,0.08);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 16px;
+    }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .stat-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      text-align: center;
+      transition: all 0.3s var(--ease-out-expo);
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--teal) 0%, var(--teal-dark) 100%);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s var(--ease-out-expo);
+    }
+    .stat-card:hover::before { transform: scaleX(1); }
+    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(15,35,66,0.1); }
+
+    .stat-card .num {
+      font-family: var(--font-display);
+      font-size: 40px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-card .num span { color: var(--teal); }
+    .stat-card .desc { font-size: 12px; color: var(--slate-mid); font-weight: 500; }
+
+    /* ── SKILLS ────────────────────────────────────────────────────────── */
+    #skills { background: var(--bg); }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .skill-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: all 0.3s var(--ease-out-expo);
+      position: relative;
+      overflow: hidden;
+    }
+    .skill-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0; top: 0;
+      background: linear-gradient(135deg, rgba(14,165,233,0.03) 0%, transparent 100%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .skill-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(15,35,66,0.12);
+      border-color: rgba(14,165,233,0.3);
+    }
+    .skill-card:hover::after { opacity: 1; }
+
+    .skill-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+    .skill-icon.blue   { background: rgba(14,165,233,0.1); }
+    .skill-icon.green  { background: rgba(34,197,94,0.1); }
+    .skill-icon.purple { background: rgba(168,85,247,0.1); }
+    .skill-icon.orange { background: rgba(249,115,22,0.1); }
+    .skill-icon.red    { background: rgba(239,68,68,0.1); }
+    .skill-icon.teal   { background: rgba(20,184,166,0.1); }
+
+    .skill-card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--navy);
+      margin-bottom: 12px;
+    }
+
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: 0.02em;
+    }
+    .tag-blue   { background: rgba(14,165,233,0.1);  color: var(--teal-dark); }
+    .tag-dark   { background: rgba(15,35,66,0.07);   color: var(--navy); }
+    .tag-green  { background: rgba(34,197,94,0.1);   color: #15803d; }
+    .tag-purple { background: rgba(168,85,247,0.1);  color: #7c3aed; }
+    .tag-orange { background: rgba(249,115,22,0.1);  color: #c2410c; }
+
+    /* ── EXPERIENCE ────────────────────────────────────────────────────── */
+    #experience { background: var(--bg-card); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 8px; bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--teal) 0%, var(--border) 100%);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 48px;
+    }
+    .timeline-item:last-child { margin-bottom: 0; }
+
+    .timeline-dot {
+      position: absolute;
+      left: -40px;
+      top: 6px;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 2.5px solid var(--teal);
+      transition: all 0.3s ease;
+    }
+    .timeline-item:hover .timeline-dot {
+      background: var(--teal);
+      box-shadow: 0 0 0 4px rgba(14,165,233,0.15);
+    }
+
+    .timeline-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 6px;
+      flex-wrap: wrap;
+    }
+    .timeline-role { font-size: 17px; font-weight: 600; color: var(--navy); }
+    .timeline-company {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--teal-dark);
+      margin-bottom: 2px;
+    }
+    .timeline-period {
+      font-size: 13px;
+      color: var(--slate-mid);
+      font-weight: 400;
+      white-space: nowrap;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 4px 12px;
+      border-radius: 20px;
+      flex-shrink: 0;
+    }
+    .timeline-project {
+      font-size: 13px;
+      color: var(--slate-mid);
+      font-style: italic;
+      margin-bottom: 14px;
+    }
+    .timeline-bullets { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .timeline-bullets li {
+      font-size: 14px;
+      color: var(--slate);
+      line-height: 1.6;
+      padding-left: 16px;
+      position: relative;
+    }
+    .timeline-bullets li::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 9px;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+    .timeline-stack {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    /* ── PROJECTS ──────────────────────────────────────────────────────── */
+    #projects { background: var(--bg); }
+
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .project-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      transition: all 0.3s var(--ease-out-expo);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .project-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 40px rgba(15,35,66,0.12);
+      border-color: rgba(14,165,233,0.25);
+    }
+    .project-num {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 800;
+      color: rgba(14,165,233,0.15);
+      line-height: 1;
+    }
+    .project-name { font-size: 16px; font-weight: 600; color: var(--navy); }
+    .project-sub  { font-size: 12px; color: var(--teal); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+    .project-desc { font-size: 14px; color: var(--slate); line-height: 1.7; flex: 1; }
+
+    /* ── CONTACT ───────────────────────────────────────────────────────── */
+    #contact {
+      background: var(--navy);
+      padding: 80px 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    #contact::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    #contact .section-label { color: var(--teal); }
+    #contact .section-title { color: #fff; }
+    #contact .section-sub   { color: rgba(255,255,255,0.5); }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: start;
+      position: relative;
+      z-index: 1;
+    }
+
+    .contact-items { display: flex; flex-direction: column; gap: 16px; }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+    .contact-item:hover {
+      background: rgba(14,165,233,0.1);
+      border-color: rgba(14,165,233,0.3);
+      transform: translateX(4px);
+    }
+    .contact-item .ci-icon {
+      width: 40px; height: 40px;
+      background: rgba(14,165,233,0.1);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .contact-item .ci-label { font-size: 11px; color: rgba(255,255,255,0.4); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+    .contact-item .ci-val   { font-size: 14px; color: #fff; font-weight: 500; }
+
+    /* Availability card */
+    .availability {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 32px;
+    }
+    .avail-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #4ade80;
+      letter-spacing: 0.04em;
+    }
+    .avail-dot::before {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #4ade80;
+      animation: pulse-dot 2s ease infinite;
+    }
+    .availability h3 { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 12px; font-family: var(--font-display); }
+    .availability p  { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.7; margin-bottom: 24px; }
+
+    /* ── FOOTER ────────────────────────────────────────────────────────── */
+    footer {
+      background: #0a1929;
+      padding: 24px 40px;
+      text-align: center;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    footer p { font-size: 13px; color: rgba(255,255,255,0.3); }
+    footer span { color: var(--teal); }
+
+    /* ── ANIMATIONS ────────────────────────────────────────────────────── */
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ────────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      #hero { padding: 80px 20px 60px; }
+      .hero-inner { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+      .hero-cta { justify-content: center; }
+      .hero-desc { margin-left: auto; margin-right: auto; }
+      .hero-visual { order: -1; }
+      section { padding: 60px 20px; }
+      .about-grid { grid-template-columns: 1fr; gap: 40px; }
+      .skills-grid { grid-template-columns: repeat(2, 1fr); }
+      .projects-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .skills-grid { grid-template-columns: 1fr; }
+      .hero-name { font-size: 36px; }
+      footer { padding: 20px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="cursor-glow"></div>
+
+  <!-- ── NAV ──────────────────────────────────────────────────────────── -->
+  <nav id="navbar">
+    <div class="nav-logo" title="HP">HP</div>
+
+    <ul class="nav-links">
+      <li><a href="#hero"       class="i18n nav-link active" data-en="Home"       data-vi="Trang chủ">Home</a></li>
+      <li><a href="#about"      class="i18n nav-link"        data-en="About"      data-vi="Về tôi">About</a></li>
+      <li><a href="#skills"     class="i18n nav-link"        data-en="Skills"     data-vi="Kỹ năng">Skills</a></li>
+      <li><a href="#experience" class="i18n nav-link"        data-en="Experience" data-vi="Kinh nghiệm">Experience</a></li>
+      <li><a href="#projects"   class="i18n nav-link"        data-en="Projects"   data-vi="Dự án">Projects</a></li>
+      <li><a href="#contact"    class="i18n nav-link"        data-en="Contact"    data-vi="Liên hệ">Contact</a></li>
+    </ul>
+
+    <div class="nav-right">
+      <div class="lang-toggle">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn"        data-lang="vi">VI</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── HERO ─────────────────────────────────────────────────────────── -->
+  <section id="hero">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-badge i18n" data-en="Available for new opportunities" data-vi="Sẵn sàng cho cơ hội mới">
+          Available for new opportunities
+        </div>
+
+        <h1 class="hero-name">
+          Le Huu<br><span>Phuoc</span>
+        </h1>
+
+        <p class="hero-title i18n" data-en="Senior PHP Developer · 7+ Years" data-vi="Lập trình viên PHP Senior · 7+ Năm">
+          Senior PHP Developer · 7+ Years
+        </p>
+
+        <p class="hero-desc i18n"
+           data-en="Building robust, scalable web applications with PHP, Laravel, CakePHP and CodeIgniter. Passionate about clean architecture, RESTful APIs, and delivering real impact through code."
+           data-vi="Xây dựng các ứng dụng web mạnh mẽ, có khả năng mở rộng với PHP, Laravel, CakePHP và CodeIgniter. Đam mê clean architecture, RESTful API và tạo ra giá trị thực qua code.">
+          Building robust, scalable web applications with PHP, Laravel, CakePHP and CodeIgniter. Passionate about clean architecture, RESTful APIs, and delivering real impact through code.
+        </p>
+
+        <div class="hero-cta">
+          <a href="#contact" class="btn-primary i18n" data-en="Get in touch →" data-vi="Liên hệ ngay →">Get in touch →</a>
+          <a href="#experience" class="btn-secondary i18n" data-en="View experience" data-vi="Xem kinh nghiệm">View experience</a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="avatar-wrap">
+          <div class="avatar-ring"></div>
+          <div class="avatar-ring-2"></div>
+          <div class="avatar-circle">HP</div>
+
+          <div class="stat-chip chip-years">
+            <div class="val">7<span style="font-size:16px;color:var(--teal)">+</span></div>
+            <div class="lbl i18n" data-en="Years exp." data-vi="Năm KN">Years exp.</div>
+          </div>
+          <div class="stat-chip chip-proj">
+            <div class="val">10<span style="font-size:16px;color:var(--teal)">+</span></div>
+            <div class="lbl i18n" data-en="Projects" data-vi="Dự án">Projects</div>
+          </div>
+          <div class="stat-chip chip-stack">
+            <div class="val">15<span style="font-size:16px;color:var(--teal)">+</span></div>
+            <div class="lbl i18n" data-en="Tech stack" data-vi="Công nghệ">Tech stack</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ABOUT ─────────────────────────────────────────────────────────── -->
+  <section id="about">
+    <div class="section-inner">
+      <div class="about-grid">
+        <div class="about-text reveal">
+          <p class="section-label i18n" data-en="ABOUT ME" data-vi="VỀ TÔI">ABOUT ME</p>
+          <h2 class="section-title i18n" data-en="Turning complex problems into elegant solutions" data-vi="Biến vấn đề phức tạp thành giải pháp tinh tế">
+            Turning complex problems into elegant solutions
+          </h2>
+          <p class="i18n"
+             data-en="I'm a Senior PHP Developer with 7+ years of hands-on experience designing, building, and scaling web applications across diverse industries. I bring deep expertise in PHP (8.x), Laravel, CakePHP, and CodeIgniter."
+             data-vi="Tôi là Lập trình viên PHP Senior với hơn 7 năm kinh nghiệm thực tế thiết kế, xây dựng và mở rộng ứng dụng web trong nhiều lĩnh vực. Tôi có chuyên môn sâu về PHP (8.x), Laravel, CakePHP và CodeIgniter.">
+            I'm a Senior PHP Developer with 7+ years of hands-on experience designing, building, and scaling web applications across diverse industries. I bring deep expertise in PHP (8.x), Laravel, CakePHP, and CodeIgniter.
+          </p>
+          <p class="i18n" style="margin-top:12px"
+             data-en="I care about clean architecture, maintainable code, and building systems that actually scale. I enjoy collaborating, reviewing code, and helping others grow."
+             data-vi="Tôi coi trọng kiến trúc sạch, code có thể bảo trì và xây dựng hệ thống thực sự có thể mở rộng. Tôi thích cộng tác, review code và giúp đỡ người khác phát triển.">
+            I care about clean architecture, maintainable code, and building systems that actually scale. I enjoy collaborating, reviewing code, and helping others grow.
+          </p>
+
+          <div class="info-list">
+            <div class="info-item">
+              <div class="info-icon">📍</div>
+              <span>An Hoi Tay, Ho Chi Minh City, Vietnam</span>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">🎓</div>
+              <span class="i18n" data-en="Bachelor of Computer Science — HCMC Open University" data-vi="Cử nhân CNTT — ĐH Mở TP.HCM">Bachelor of Computer Science — HCMC Open University</span>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">🌐</div>
+              <span>TOEIC 500+ · English (Technical)</span>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">✉️</div>
+              <span>lehuuphuoc0196@gmail.com</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal reveal-delay-2">
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="num">7<span>+</span></div>
+              <div class="desc i18n" data-en="Years of experience" data-vi="Năm kinh nghiệm">Years of experience</div>
+            </div>
+            <div class="stat-card">
+              <div class="num">3<span>+</span></div>
+              <div class="desc i18n" data-en="Companies worked" data-vi="Công ty đã làm">Companies worked</div>
+            </div>
+            <div class="stat-card">
+              <div class="num">4</div>
+              <div class="desc i18n" data-en="PHP frameworks" data-vi="PHP framework">PHP frameworks</div>
+            </div>
+            <div class="stat-card">
+              <div class="num">10<span>+</span></div>
+              <div class="desc i18n" data-en="Projects delivered" data-vi="Dự án hoàn thành">Projects delivered</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SKILLS ────────────────────────────────────────────────────────── -->
+  <section id="skills">
+    <div class="section-inner">
+      <p class="section-label reveal i18n" data-en="EXPERTISE" data-vi="CHUYÊN MÔN">EXPERTISE</p>
+      <h2 class="section-title reveal i18n" data-en="Technical skills" data-vi="Kỹ năng kỹ thuật">Technical skills</h2>
+      <p class="section-sub reveal i18n"
+         data-en="A curated stack built over 7 years of real-world projects — from monoliths to APIs to SaaS platforms."
+         data-vi="Bộ công nghệ được đúc kết qua 7 năm làm dự án thực tế — từ monolith đến API đến nền tảng SaaS.">
+        A curated stack built over 7 years of real-world projects — from monoliths to APIs to SaaS platforms.
+      </p>
+
+      <div class="skills-grid">
+        <div class="skill-card reveal reveal-delay-1">
+          <div class="skill-icon blue">🐘</div>
+          <h3>Back-end</h3>
+          <div class="skill-tags">
+            <span class="tag tag-blue">PHP 8.x</span>
+            <span class="tag tag-blue">Laravel</span>
+            <span class="tag tag-blue">CakePHP</span>
+            <span class="tag tag-blue">CodeIgniter</span>
+            <span class="tag tag-dark">Vanilla PHP</span>
+          </div>
+        </div>
+
+        <div class="skill-card reveal reveal-delay-2">
+          <div class="skill-icon orange">🎨</div>
+          <h3>Front-end</h3>
+          <div class="skill-tags">
+            <span class="tag tag-orange">JavaScript</span>
+            <span class="tag tag-orange">TypeScript</span>
+            <span class="tag tag-dark">React.js</span>
+            <span class="tag tag-dark">Vue.js</span>
+            <span class="tag tag-dark">Angular</span>
+            <span class="tag tag-dark">jQuery</span>
+            <span class="tag tag-dark">Bootstrap</span>
+          </div>
+        </div>
+
+        <div class="skill-card reveal reveal-delay-3">
+          <div class="skill-icon green">🗄️</div>
+          <h3>Database</h3>
+          <div class="skill-tags">
+            <span class="tag tag-green">MySQL</span>
+            <span class="tag tag-green">PostgreSQL</span>
+            <span class="tag tag-green">SQL Server</span>
+            <span class="tag tag-green">Oracle</span>
+          </div>
+        </div>
+
+        <div class="skill-card reveal reveal-delay-1">
+          <div class="skill-icon purple">🔌</div>
+          <h3>API & Architecture</h3>
+          <div class="skill-tags">
+            <span class="tag tag-purple">RESTful API</span>
+            <span class="tag tag-dark">MVC</span>
+            <span class="tag tag-dark">H-MVC</span>
+            <span class="tag tag-dark">JSON</span>
+            <span class="tag tag-dark">Ajax</span>
+          </div>
+        </div>
+
+        <div class="skill-card reveal reveal-delay-2">
+          <div class="skill-icon teal">⚙️</div>
+          <h3>DevOps & Tools</h3>
+          <div class="skill-tags">
+            <span class="tag tag-blue">Git / GitHub</span>
+            <span class="tag tag-blue">GitLab</span>
+            <span class="tag tag-dark">Docker</span>
+            <span class="tag tag-dark">AWS EC2/S3</span>
+            <span class="tag tag-dark">Linux CLI</span>
+          </div>
+        </div>
+
+        <div class="skill-card reveal reveal-delay-3">
+          <div class="skill-icon red">🧪</div>
+          <h3 class="i18n" data-en="Testing & Tools" data-vi="Kiểm thử & Công cụ">Testing & Tools</h3>
+          <div class="skill-tags">
+            <span class="tag tag-dark">PHPUnit</span>
+            <span class="tag tag-dark">TestCafe</span>
+            <span class="tag tag-dark">Postman</span>
+            <span class="tag tag-dark">Jira</span>
+            <span class="tag tag-blue">Claude AI</span>
+            <span class="tag tag-blue">Cursor</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── EXPERIENCE ────────────────────────────────────────────────────── -->
+  <section id="experience">
+    <div class="section-inner">
+      <p class="section-label reveal i18n" data-en="CAREER" data-vi="SỰ NGHIỆP">CAREER</p>
+      <h2 class="section-title reveal i18n" data-en="Work experience" data-vi="Kinh nghiệm làm việc">Work experience</h2>
+      <p class="section-sub reveal i18n"
+         data-en="7+ years across FPT Software, Cloud Nine Solutions and VNJ Company — shipping production systems from day one."
+         data-vi="7+ năm tại FPT Software, Cloud Nine Solutions và VNJ Company — triển khai hệ thống thực tế từ ngày đầu tiên.">
+        7+ years across FPT Software, Cloud Nine Solutions and VNJ Company — shipping production systems from day one.
+      </p>
+
+      <div class="timeline">
+
+        <!-- VNJ -->
+        <div class="timeline-item reveal">
+          <div class="timeline-dot"></div>
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-role i18n" data-en="Senior PHP Developer" data-vi="Lập trình viên PHP Senior">Senior PHP Developer</div>
+              <div class="timeline-company">VNJ Company</div>
+            </div>
+            <span class="timeline-period i18n" data-en="Feb 2023 – Present" data-vi="Tháng 2/2023 – Hiện tại">Feb 2023 – Present</span>
+          </div>
+          <div class="timeline-project i18n"
+               data-en="▸ Translation Management Platform — multi-language content system with AI translation service integrations for Japanese clients"
+               data-vi="▸ Nền tảng quản lý dịch thuật — hệ thống nội dung đa ngôn ngữ tích hợp dịch vụ AI cho khách hàng Nhật">
+            ▸ Translation Management Platform — multi-language content system with AI translation service integrations for Japanese clients
+          </div>
+          <ul class="timeline-bullets">
+            <li class="i18n" data-en="Led migration from custom in-house design to structured CakePHP framework architecture." data-vi="Dẫn dắt quá trình chuyển đổi từ thiết kế nội bộ sang kiến trúc CakePHP framework có cấu trúc.">Led migration from custom in-house design to structured CakePHP framework architecture.</li>
+            <li class="i18n" data-en="Built and maintained RESTful APIs; consumed AI translation services — handling flow, storing results, and tracking status." data-vi="Xây dựng và duy trì RESTful API; tiêu thụ dịch vụ dịch AI — xử lý luồng, lưu kết quả và theo dõi trạng thái.">Built and maintained RESTful APIs; consumed AI translation services — handling flow, storing results, and tracking status.</li>
+            <li class="i18n" data-en="Analyzed client requirements, proposed technical solutions, and provided task estimations." data-vi="Phân tích yêu cầu khách hàng, đề xuất giải pháp kỹ thuật và ước tính công việc.">Analyzed client requirements, proposed technical solutions, and provided task estimations.</li>
+            <li class="i18n" data-en="Reviewed code and supported junior/mid developers; deployed source code to AWS." data-vi="Review code và hỗ trợ developer junior/mid; triển khai source code lên AWS.">Reviewed code and supported junior/mid developers; deployed source code to AWS.</li>
+          </ul>
+          <div class="timeline-stack">
+            <span class="tag tag-blue">CakePHP</span><span class="tag tag-dark">PHP 8.x</span>
+            <span class="tag tag-dark">MySQL</span><span class="tag tag-dark">AWS</span>
+            <span class="tag tag-dark">GitHub</span><span class="tag tag-green">REST API</span>
+          </div>
+        </div>
+
+        <!-- Cloud Nine -->
+        <div class="timeline-item reveal reveal-delay-1">
+          <div class="timeline-dot"></div>
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-role i18n" data-en="PHP Developer" data-vi="Lập trình viên PHP">PHP Developer</div>
+              <div class="timeline-company">Cloud Nine Solutions</div>
+            </div>
+            <span class="timeline-period i18n" data-en="Nov 2019 – Jan 2023" data-vi="Tháng 11/2019 – Tháng 1/2023">Nov 2019 – Jan 2023</span>
+          </div>
+          <div class="timeline-project i18n"
+               data-en="▸ Area Marker — multi-tenant SaaS platform for map-based store and location management"
+               data-vi="▸ Area Marker — nền tảng SaaS đa tenant quản lý cửa hàng và vị trí trên bản đồ">
+            ▸ Area Marker — multi-tenant SaaS platform for map-based store and location management
+          </div>
+          <ul class="timeline-bullets">
+            <li class="i18n" data-en="Developed full-stack features using PHP, Python, and Angular on a shared multi-tenant platform." data-vi="Phát triển tính năng full-stack với PHP, Python và Angular trên nền tảng đa tenant.">Developed full-stack features using PHP, Python, and Angular on a shared multi-tenant platform.</li>
+            <li class="i18n" data-en="Managed and optimized multiple databases: MySQL and PostgreSQL — indexing and query tuning." data-vi="Quản lý và tối ưu nhiều cơ sở dữ liệu: MySQL và PostgreSQL — indexing và tối ưu truy vấn.">Managed and optimized multiple databases: MySQL and PostgreSQL — indexing and query tuning.</li>
+            <li class="i18n" data-en="Built Docker environments and deployed systems on AWS; managed releases via GitLab." data-vi="Xây dựng môi trường Docker và triển khai hệ thống trên AWS; quản lý release qua GitLab.">Built Docker environments and deployed systems on AWS; managed releases via GitLab.</li>
+          </ul>
+          <div class="timeline-stack">
+            <span class="tag tag-blue">PHP</span><span class="tag tag-orange">Angular</span>
+            <span class="tag tag-dark">Python</span><span class="tag tag-green">PostgreSQL</span>
+            <span class="tag tag-dark">Docker</span><span class="tag tag-dark">AWS</span>
+          </div>
+        </div>
+
+        <!-- FPT -->
+        <div class="timeline-item reveal reveal-delay-2">
+          <div class="timeline-dot"></div>
+          <div class="timeline-header">
+            <div>
+              <div class="timeline-role i18n" data-en="Junior PHP Developer" data-vi="Lập trình viên PHP Junior">Junior PHP Developer</div>
+              <div class="timeline-company">FPT Software</div>
+            </div>
+            <span class="timeline-period i18n" data-en="Jul 2018 – Oct 2019" data-vi="Tháng 7/2018 – Tháng 10/2019">Jul 2018 – Oct 2019</span>
+          </div>
+          <div class="timeline-project i18n"
+               data-en="▸ EWO-365 — intelligent veterinary hospital management system"
+               data-vi="▸ EWO-365 — hệ thống quản lý bệnh viện thú y thông minh">
+            ▸ EWO-365 — intelligent veterinary hospital management system
+          </div>
+          <ul class="timeline-bullets">
+            <li class="i18n" data-en="Developed backend modules with CodeIgniter (H-MVC); built RESTful APIs and wrote unit tests." data-vi="Phát triển module backend với CodeIgniter (H-MVC); xây dựng RESTful API và viết unit test.">Developed backend modules with CodeIgniter (H-MVC); built RESTful APIs and wrote unit tests.</li>
+            <li class="i18n" data-en="Automated end-to-end testing with TestCafe; improved MySQL query performance." data-vi="Tự động hoá kiểm thử end-to-end với TestCafe; cải thiện hiệu năng truy vấn MySQL.">Automated end-to-end testing with TestCafe; improved MySQL query performance.</li>
+          </ul>
+          <div class="timeline-stack">
+            <span class="tag tag-blue">CodeIgniter</span><span class="tag tag-dark">PHP</span>
+            <span class="tag tag-green">MySQL</span><span class="tag tag-dark">TestCafe</span>
+            <span class="tag tag-dark">jQuery</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROJECTS ──────────────────────────────────────────────────────── -->
+  <section id="projects">
+    <div class="section-inner">
+      <p class="section-label reveal i18n" data-en="PORTFOLIO" data-vi="DỰ ÁN">PORTFOLIO</p>
+      <h2 class="section-title reveal i18n" data-en="Notable projects" data-vi="Dự án nổi bật">Notable projects</h2>
+      <p class="section-sub reveal i18n"
+         data-en="Real-world systems built and shipped across different domains and tech stacks."
+         data-vi="Các hệ thống thực tế được xây dựng và triển khai trên nhiều lĩnh vực và công nghệ khác nhau.">
+        Real-world systems built and shipped across different domains and tech stacks.
+      </p>
+
+      <div class="projects-grid">
+        <div class="project-card reveal reveal-delay-1">
+          <div class="project-num">01</div>
+          <div>
+            <div class="project-sub">VNJ Company · 2023–Present</div>
+            <div class="project-name i18n" data-en="Translation Management Platform" data-vi="Nền tảng quản lý dịch thuật">Translation Management Platform</div>
+          </div>
+          <p class="project-desc i18n"
+             data-en="Multi-language web platform for Japanese clients. Integrated AI translation services with full request/response flow, result storage, and status tracking."
+             data-vi="Nền tảng web đa ngôn ngữ cho khách hàng Nhật. Tích hợp dịch vụ AI dịch thuật với luồng request/response đầy đủ, lưu kết quả và theo dõi trạng thái.">
+            Multi-language web platform for Japanese clients. Integrated AI translation services with full request/response flow, result storage, and status tracking.
+          </p>
+          <div class="skill-tags">
+            <span class="tag tag-blue">CakePHP</span>
+            <span class="tag tag-dark">MySQL</span>
+            <span class="tag tag-dark">AWS</span>
+          </div>
+        </div>
+
+        <div class="project-card reveal reveal-delay-2">
+          <div class="project-num">02</div>
+          <div>
+            <div class="project-sub">Cloud Nine Solutions · 2019–2023</div>
+            <div class="project-name">Area Marker</div>
+          </div>
+          <p class="project-desc i18n"
+             data-en="Multi-tenant SaaS platform enabling businesses to manage store networks, products, and locations on an interactive map. Fully customizable per client."
+             data-vi="Nền tảng SaaS đa tenant giúp doanh nghiệp quản lý mạng lưới cửa hàng, sản phẩm và vị trí trên bản đồ tương tác. Hoàn toàn tùy chỉnh theo từng khách hàng.">
+            Multi-tenant SaaS platform enabling businesses to manage store networks, products, and locations on an interactive map. Fully customizable per client.
+          </p>
+          <div class="skill-tags">
+            <span class="tag tag-blue">PHP</span>
+            <span class="tag tag-orange">Angular</span>
+            <span class="tag tag-dark">Docker</span>
+            <span class="tag tag-dark">AWS</span>
+          </div>
+        </div>
+
+        <div class="project-card reveal reveal-delay-3">
+          <div class="project-num">03</div>
+          <div>
+            <div class="project-sub i18n" data-en="Graduation Thesis · Award-winning 2019" data-vi="Đồ án tốt nghiệp · Giải thưởng 2019">Graduation Thesis · Award-winning 2019</div>
+            <div class="project-name i18n" data-en="Smart Traffic Assistance System" data-vi="Hệ thống hỗ trợ giao thông thông minh">Smart Traffic Assistance System</div>
+          </div>
+          <p class="project-desc i18n"
+             data-en="Web-based platform helping urban commuters find optimal routes using real-time traffic data and interactive maps. Won 2nd Prize at the University Scientific Research Competition."
+             data-vi="Nền tảng web hỗ trợ người tham gia giao thông tìm lộ trình tối ưu với dữ liệu giao thông thời gian thực. Đạt giải Nhì cuộc thi NCKH cấp trường.">
+            Web-based platform helping urban commuters find optimal routes using real-time traffic data and interactive maps. Won 2nd Prize at the University Scientific Research Competition.
+          </p>
+          <div class="skill-tags">
+            <span class="tag tag-blue">CodeIgniter</span>
+            <span class="tag tag-dark">MySQL</span>
+            <span class="tag tag-green">Google Maps API</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CONTACT ───────────────────────────────────────────────────────── -->
+  <section id="contact">
+    <div class="section-inner">
+      <p class="section-label reveal i18n" data-en="CONTACT" data-vi="LIÊN HỆ">CONTACT</p>
+      <h2 class="section-title reveal i18n" data-en="Let's work together" data-vi="Hãy cùng làm việc">Let's work together</h2>
+      <p class="section-sub reveal i18n"
+         data-en="Open to full-time roles and interesting projects. Drop me a message — I reply within 24 hours."
+         data-vi="Sẵn sàng cho các vị trí full-time và dự án thú vị. Nhắn tin cho tôi — tôi trả lời trong vòng 24 giờ.">
+        Open to full-time roles and interesting projects. Drop me a message — I reply within 24 hours.
+      </p>
+
+      <div class="contact-grid">
+        <div class="contact-items reveal">
+          <a href="mailto:lehuuphuoc0196@gmail.com?subject=Job%20Opportunity%20%E2%80%94%20Senior%20PHP%20Developer&body=Hi%20Phuoc%2C%0A%0AI%20came%20across%20your%20profile%20and%20would%20love%20to%20connect%20regarding%20a%20potential%20opportunity.%0A%0A" class="contact-item">
+            <div class="ci-icon">✉️</div>
+            <div>
+              <div class="ci-label">Email</div>
+              <div class="ci-val">lehuuphuoc0196@gmail.com</div>
+              <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:2px;" class="i18n" data-en="Click to open mail app" data-vi="Nhấn để mở ứng dụng email">Click to open mail app</div>
+            </div>
+          </a>
+          <a href="tel:+84382834597" class="contact-item">
+            <div class="ci-icon">📱</div>
+            <div>
+              <div class="ci-label i18n" data-en="Phone" data-vi="Điện thoại">Phone</div>
+              <div class="ci-val">0382 834 597</div>
+            </div>
+          </a>
+          <a href="https://github.com/HuuPhuoc0196" target="_blank" rel="noopener" class="contact-item">
+            <div class="ci-icon">🔗</div>
+            <div>
+              <div class="ci-label">GitHub</div>
+              <div class="ci-val">github.com/HuuPhuoc0196</div>
+            </div>
+          </a>
+          <a href="https://investment-manager.xyz/profile" target="_blank" rel="noopener" class="contact-item">
+            <div class="ci-icon">🌐</div>
+            <div>
+              <div class="ci-label i18n" data-en="Portfolio" data-vi="Portfolio">Portfolio</div>
+              <div class="ci-val">investment-manager.xyz/profile</div>
+            </div>
+          </a>
+          <div class="contact-item" style="cursor:default;">
+            <div class="ci-icon">📍</div>
+            <div>
+              <div class="ci-label i18n" data-en="Location" data-vi="Địa chỉ">Location</div>
+              <div class="ci-val">An Hoi Tay, Ho Chi Minh City</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="availability reveal reveal-delay-2">
+          <div class="avail-dot i18n" data-en="Available now" data-vi="Sẵn sàng ngay">Available now</div>
+          <h3 class="i18n" data-en="Ready for your next project" data-vi="Sẵn sàng cho dự án tiếp theo">Ready for your next project</h3>
+          <p class="i18n"
+             data-en="Whether you need a senior developer to join your team, lead a backend project, or consult on PHP architecture — I'm ready to bring value from day one."
+             data-vi="Dù bạn cần một senior developer gia nhập team, dẫn dắt dự án backend, hay tư vấn kiến trúc PHP — tôi sẵn sàng tạo ra giá trị từ ngày đầu tiên.">
+            Whether you need a senior developer to join your team, lead a backend project, or consult on PHP architecture — I'm ready to bring value from day one.
+          </p>
+          <a href="mailto:lehuuphuoc0196@gmail.com?subject=Job%20Opportunity%20%E2%80%94%20Senior%20PHP%20Developer&body=Hi%20Phuoc%2C%0A%0AI%20came%20across%20your%20profile%20and%20would%20love%20to%20connect%20regarding%20a%20potential%20opportunity.%0A%0A" class="btn-primary i18n" style="display:inline-flex;"
+             data-en="Send me an email →"
+             data-vi="Gửi email cho tôi →">
+            Send me an email →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ────────────────────────────────────────────────────────── -->
+  <footer>
+    <p>© 2025 <span>Le Huu Phuoc</span> · Built with care · Ho Chi Minh City, Vietnam</p>
+  </footer>
+
+  <!-- ── SCRIPTS ───────────────────────────────────────────────────────── -->
+  <script>
+    'use strict';
+
+    /* ── Cursor glow ── */
+    const glow = document.getElementById('cursor-glow');
+    document.addEventListener('mousemove', e => {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top  = e.clientY + 'px';
+    });
+
+    /* ── Navbar scroll shadow ── */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    }, { passive: true });
+
+    /* ── Active nav link on scroll ── */
+    const sections  = document.querySelectorAll('section[id]');
+    const navLinks  = document.querySelectorAll('.nav-link');
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(a => a.classList.remove('active'));
+          const active = document.querySelector(`.nav-link[href="#${entry.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { threshold: 0.4 });
+
+    sections.forEach(s => observer.observe(s));
+
+    /* ── Scroll reveal ── */
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    /* ── Language switcher ── */
+    let currentLang = 'en';
+
+    function applyLang(lang) {
+      currentLang = lang;
+      document.querySelectorAll('.i18n').forEach(el => {
+        const val = el.dataset[lang];
+        if (val !== undefined) el.textContent = val;
+      });
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === lang);
+      });
+      document.documentElement.lang = lang;
+    }
+
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    });
+
+    /* ── Number count-up animation ── */
+    function countUp(el, target, suffix = '') {
+      const duration = 1200;
+      const start    = performance.now();
+      const update   = now => {
+        const elapsed  = Math.min(now - start, duration);
+        const progress = 1 - Math.pow(1 - elapsed / duration, 4);
+        el.textContent = Math.round(target * progress) + suffix;
+        if (elapsed < duration) requestAnimationFrame(update);
+      };
+      requestAnimationFrame(update);
+    }
+
+    const statObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.querySelectorAll('.num').forEach(el => {
+          const match = el.textContent.match(/(\d+)/);
+          if (!match) return;
+          const num    = parseInt(match[1]);
+          const suffix = el.textContent.includes('+') ? '<span>+</span>' : '';
+          el.innerHTML = '0' + suffix;
+          const span = el.querySelector('span');
+          countUp(span ? el.firstChild : el, num, '');
+          if (span) span.style.color = 'var(--teal)';
+        });
+        statObserver.unobserve(entry.target);
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.stats-row').forEach(el => statObserver.observe(el));
+  </script>
+
+</body>
+</html>
